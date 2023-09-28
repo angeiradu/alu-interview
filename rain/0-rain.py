@@ -1,21 +1,37 @@
 #!/usr/bin/python3
 # the amount of rainwater retained between the walls.
+
 def rain(walls):
-    if not walls:
-        return 0
-    
-    left, right = 0, len(walls) - 1
-    left_max, right_max = 0, 0
-    total_rainwater = 0
-    
-    while left < right:
-        if walls[left] <= walls[right]:
-            left_max = max(left_max, walls[left])
-            total_rainwater += left_max - walls[left]
-            left += 1
+    water_temp = 0
+    water = 0
+    size = len(walls)
+    prev_wall = 0
+
+    if size <= 0:
+        return water_temp
+
+    for i in range(size):
+
+        if walls[i] >= walls[prev_wall]:
+            prev_wall = i
+            water_temp = 0
         else:
-            right_max = max(right_max, walls[right])
-            total_rainwater += right_max - walls[right]
-            right -= 1
-    
-    return total_rainwater
+            water += walls[prev_wall] - walls[i]
+            water_temp += walls[prev_wall] - walls[i]
+
+    if prev_wall < size - 1:
+
+        # Subtract last temp volume from total.
+        water -= water_temp
+        # Store last peak wall.
+        prev_pass_peak = prev_wall
+        prev_wall = size - 1
+
+        for i in range(size - 1, prev_pass_peak, -1):
+
+            if walls[i] >= walls[prev_wall]:
+                prev_wall = i
+            else:
+                water += walls[prev_wall] - walls[i]
+
+    return water
